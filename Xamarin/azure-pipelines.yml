@@ -99,6 +99,7 @@ jobs:
       appcenterAndroid: ${{ parameters.appcenterIOSSecret }}
       appcenterIOS: ${{ parameters.appcenterAndroidSecret }}
       secretsFilePath: ${{ parameters.secretsFilePath }}
+    condition: and(succeeded(), ne('${{ parameters.appcenterIOSSecret }}', ''), ne('${{ parameters.appcenterAndroidSecret }}', ''))
 
   - template: ios.yml
     parameters:
@@ -130,6 +131,7 @@ jobs:
       appcenterAndroid: ${{ parameters.appcenterIOSSecret }}
       appcenterIOS: ${{ parameters.appcenterAndroidSecret }}
       secretsFilePath: ${{ parameters.secretsFilePath }}
+    condition: and(succeeded(), ne('${{ parameters.appcenterIOSSecret }}', ''), ne('${{ parameters.appcenterAndroidSecret }}', ''))
 
   - template: android.yml
     parameters:
@@ -164,6 +166,7 @@ jobs:
       appcenterAndroid: ${{ parameters.appcenterIOSSecret }}
       appcenterIOS: ${{ parameters.appcenterAndroidSecret }}
       secretsFilePath: ${{ parameters.secretsFilePath }}
+    condition: and(succeeded(), ne('${{ parameters.appcenterIOSSecret }}', ''), ne('${{ parameters.appcenterAndroidSecret }}', ''))
 
   - template: ios.yml
     parameters:
@@ -199,6 +202,7 @@ jobs:
       appcenterAndroid: ${{ parameters.appcenterIOSSecret }}
       appcenterIOS: ${{ parameters.appcenterAndroidSecret }}
       secretsFilePath: ${{ parameters.secretsFilePath }}
+    condition: and(succeeded(), ne('${{ parameters.appcenterIOSSecret }}', ''), ne('${{ parameters.appcenterAndroidSecret }}', ''))
 
   - template: android.yml
     parameters:
