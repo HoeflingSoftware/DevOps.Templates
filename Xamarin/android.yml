@@ -13,7 +13,7 @@ parameters:
 
 steps:
 - task: vs-publisher-473885.motz-mobile-buildtasks.android-manifest-version.android-manifest-version@1
-  displayName: 'Bump Android Versions in src/DnnSummit.Android/Properties/AndroidManifest.xml'
+  displayName: 'Bump Android Versions in AndroidManifest.xml'
   inputs:
     sourcePath: ${{ parameters.androidManifestSource }}
     versionName: '$(Version.majorMinor).$(Version.revision)'
