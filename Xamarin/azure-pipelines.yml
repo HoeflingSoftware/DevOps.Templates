@@ -1,0 +1,215 @@
+parameters:
+  adhocConfiguration: 'Ad-Hoc'
+  releaseConfiguration: 'Release'
+  infoPListSource: ''
+  androidManifestSource: ''
+  secretsFilePath: ''
+  createStorePackageOnBranch: 'master'
+  # App Center
+  appcenterOrganization: ''
+  appcenterIOS: ''
+  appcenterAndroid: ''
+  appcenterIOSSecret: ''
+  appcenterAndroidSecret: ''
+  # Ad-Hoc Android
+  adhocKeyStoreSecureFile: ''
+  adhocKeyStoreAlias: ''
+  adhocKeyStorePassword: ''
+  adhocKeyPassword: ''
+  adhocAndroidReleaseNotes: ''
+  # Ad-Hoc iOS
+  adhocSecureFileProvisioningProfile: ''
+  adhocSecureFileP12: ''
+  adhocP12Password: ''
+  adhocIOSReleaseNotes: ''
+  # App Store Android
+  releaseKeyStoreSecureFile: ''
+  releaseKeyStoreAlias: ''
+  releaseKeyStorePassword: ''
+  releaseKeyPassword: ''
+  releaseAndroidReleaseNotes: ''
+  # App Store iOS
+  releaseSecureFileProvisioningProfile: ''
+  releaseSecureFileP12: ''
+  releaseP12Password: ''
+  releaseIOSReleaseNotes: ''
+
+jobs:
+- job: VerifyParametersVariables
+  displayName: Verify Build Inputs
+  steps:
+  - checkout: none
+
+  - powershell: |
+      function validateVariable($name, $value)
+      {
+        if ([string]::IsNullOrEmpty($value))
+        {
+          Write-Error "Parameters $name is missing, null or empty"
+          exit 1
+        }
+      }
+      validateVariable "Version.MajorMinor" "$(Version.MajorMinor)"
+      validateVariable "Version.Revision" "$(Version.Revision)"
+    displayName: Validating Required Variables
+
+  - powershell: |
+      function validateParam($name, $value)
+      {
+        if ([string]::IsNullOrEmpty($value))
+        {
+          Write-Error "Parameters $name is missing, null or empty"
+          exit 1
+        }
+      }
+      validateParam "infoPListSource" "${{ parameters.infoPListSource }}"
+      validateParam "androidManifestSource" "${{ parameters.androidManifestSource }}"  
+      validateParam "adhocKeyStoreSecureFile" "${{ parameters.adhocKeyStoreSecureFile }}"
+      validateParam "adhocKeyStoreAlias" "${{ parameters.adhocKeyStoreAlias }}"
+      validateParam "adhocKeyStorePassword" "${{ parameters.adhocKeyStorePassword }}"
+      validateParam "adhocKeyPassword" "${{ parameters.adhocKeyPassword }}"
+      validateParam "adhocAndroidReleaseNotes" "${{ parameters.adhocAndroidReleaseNotes }}"
+      validateParam "adhocSecureFileProvisioningProfile" "${{ parameters.adhocSecureFileProvisioningProfile }}"
+      validateParam "adhocSecureFileP12" "${{ parameters.adhocSecureFileP12 }}"
+      validateParam "adhocP12Password" "${{ parameters.adhocP12Password }}"
+      validateParam "adhocIOSReleaseNotes" "${{ parameters.adhocIOSReleaseNotes }}"
+      validateParam "releaseKeyStoreSecureFile" "${{ parameters.releaseKeyStoreSecureFile }}"
+      validateParam "releaseKeyStoreAlias" "${{ parameters.releaseKeyStoreAlias }}"
+      validateParam "releaseKeyStorePassword" "${{ parameters.releaseKeyStorePassword }}"
+      validateParam "releaseKeyPassword" "${{ parameters.releaseKeyPassword }}"
+      validateParam "releaseAndroidReleaseNotes" "${{ parameters.releaseAndroidReleaseNotes }}"
+      validateParam "releaseSecureFileProvisioningProfile" "${{ parameters.releaseSecureFileProvisioningProfile }}"
+      validateParam "releaseSecureFileP12" "${{ parameters.releaseSecureFileP12 }}"
+      validateParam "releaseP12Password" "${{ parameters.releaseP12Password }}"
+      validateParam "releaseIOSReleaseNotes" "${{ parameters.releaseIOSReleaseNotes }}"
+    displayName: Validating Required Parameters
+
+- job: AdHociOSBuild
+  dependsOn: VerifyParametersVariables
+  displayName: iOS Build (Ad-Hoc)
+  pool: 
+    name: Hosted macOS
+    demands:
+    - xcode
+    - Xamarin.iOS
+
+  steps:
+  - template: secrets.yml
+    parameters:
+      appcenterAndroid: ${{ parameters.appcenterIOSSecret }}
+      appcenterIOS: ${{ parameters.appcenterAndroidSecret }}
+      secretsFilePath: ${{ parameters.secretsFilePath }}
+
+  - template: ios.yml
+    parameters:
+      infoPListSource: ${{ parameters.infoPListSource }}
+      configuration: ${{ parameters.adhocConfiguration }}
+      appcenterOrganization: '${{ parameters.appcenterOrganization }}'
+      appCenterIOS: '${{ parameters.appcenterIOS }}'
+      secureFileProvisioningProfile: '${{ parameters.adhocSecureFileProvisioningProfile }}'
+      secureFileP12: '${{ parameters.adhocSecureFileP12 }}'
+      p12Password: '${{ parameters.adhocP12Password }}'
+      releaseNotes: '${{ parameters.adhocIOSReleaseNotes }}'
+      publishToAppCenter: true
+      dropLocation: 'AppCenter'
+
+- job: AdHocAndroidBuild
+  dependsOn: VerifyParametersVariables
+  displayName: Android Build (Ad-Hoc)
+  pool: 
+    name: Hosted VS2017
+    demands:
+    - MSBuild
+    - Xamarin.Android
+    - JDK
+    - AndroidSDK
+
+  steps:
+  - template: secrets.yml
+    parameters:
+      appcenterAndroid: ${{ parameters.appcenterIOSSecret }}
+      appcenterIOS: ${{ parameters.appcenterAndroidSecret }}
+      secretsFilePath: ${{ parameters.secretsFilePath }}
+
+  - template: android.yml
+    parameters:
+      androidManifestSource: ${{ parameters.androidManifestSource }}
+      configuration: ${{ parameters.adhocConfiguration }}
+      appcenterOrganization: '${{ parameters.appcenterOrganization }}'
+      appCenterAndroid: '${{ parameters.appcenterAndroid }}'
+      keyStoreSecureFile: '${{ parameters.adhocKeyStoreSecureFile }}'
+      keyStoreAlias: '${{ parameters.adhocKeyStoreAlias }}'
+      keyStorePassword: '${{ parameters.adhocKeyStorePassword }}'
+      keyPassword: '${{ parameters.adhocKeyPassword }}'
+      releaseNotes: '${{ parameters.adhocAndroidReleaseNotes }}'
+      publishToAppCenter: true
+      dropLocation: 'AppCenter'
+
+- job: StoreiOSBuild
+  dependsOn: 
+  - VerifyParametersVariables
+  - AdHocAndroidBuild
+  - AdHociOSBuild
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], '${{ parameters.createStorePackageOnBranch }}'))
+  displayName: iOS Build (App Store)
+  pool: 
+    name: Hosted macOS
+    demands:
+    - xcode
+    - Xamarin.iOS
+
+  steps:
+  - template: secrets.yml
+    parameters:
+      appcenterAndroid: ${{ parameters.appcenterIOSSecret }}
+      appcenterIOS: ${{ parameters.appcenterAndroidSecret }}
+      secretsFilePath: ${{ parameters.secretsFilePath }}
+
+  - template: ios.yml
+    parameters:
+      infoPListSource: ${{ parameters.infoPListSource }}
+      configuration: 'AppStore'
+      appcenterOrganization: '${{ parameters.appcenterOrganization }}'
+      appCenterIOS: '${{ parameters.appcenterIOS }}'
+      secureFileProvisioningProfile: '${{ parameters.releaseSecureFileProvisioningProfile }}'
+      secureFileP12: '${{ parameters.releaseSecureFileP12 }}'
+      p12Password: '${{ parameters.releaseP12Password }}'
+      releaseNotes: '${{ parameters.releaseIOSReleaseNotes }}'
+      publishToAppCenter: false
+      dropLocation: 'Store'
+
+- job: StoreAndroidBuild
+  dependsOn: 
+  - VerifyParametersVariables
+  - AdHocAndroidBuild
+  - AdHociOSBuild
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], '${{ parameters.createStorePackageOnBranch }}'))
+  displayName: Android Build (Play Store)
+  pool: 
+    name: Hosted VS2017
+    demands:
+    - MSBuild
+    - Xamarin.Android
+    - JDK
+    - AndroidSDK
+
+  steps:
+  - template: secrets.yml
+    parameters:
+      appcenterAndroid: ${{ parameters.appcenterIOSSecret }}
+      appcenterIOS: ${{ parameters.appcenterAndroidSecret }}
+      secretsFilePath: ${{ parameters.secretsFilePath }}
+
+  - template: android.yml
+    parameters:
+      androidManifestSource: ${{ parameters.androidManifestSource }}
+      configuration: ${{ parameters.releaseConfiguration }}
+      appcenterOrganization: '${{ parameters.appcenterOrganization }}'
+      appCenterAndroid: '${{ parameters.appcenterAndroid }}'
+      keyStoreSecureFile: '${{ parameters.releaseKeyStoreSecureFile }}'
+      keyStoreAlias: '${{ parameters.releaseKeyStoreAlias }}'
+      keyStorePassword: '${{ parameters.releaseKeyStorePassword }}'
+      keyPassword: '${{ parameters.releaseKeyPassword }}'
+      releaseNotes: '${{ parameters.releaseAndroidReleaseNotes }}'
+      publishToAppCenter: false
+      dropLocation: 'Store'

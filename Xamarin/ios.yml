@@ -1,0 +1,81 @@
+parameters:
+  configuration: 'Debug'
+  infoPListSource: ''  
+  appcenterOrganization: ''
+  appcenterIOS: ''
+  secureFileProvisioningProfile: ''
+  secureFileP12: ''
+  p12Password: ''
+  releaseNotes: ''
+  publishToAppCenter: true
+  dropLocation: 'drop'
+
+steps:
+- task: InstallAppleCertificate@2
+  displayName: 'Install an Apple certificate'
+  inputs:
+    certSecureFile: '${{ parameters.secureFileP12 }}'
+    certPwd: '${{ parameters.p12Password }}'
+
+- task: InstallAppleProvisioningProfile@1
+  displayName: 'Install an Apple provisioning profile'
+  inputs:
+    provProfileSecureFile: '${{ parameters.secureFileProvisioningProfile }}'
+
+- task: vs-publisher-473885.motz-mobile-buildtasks.ios-bundle-version.ios-bundle-version@1
+  displayName: 'Bump iOS Versions in Info.plist'
+  inputs:
+    sourcePath: ${{ parameters.infoPListSource }}
+    versionName: '$(Version.MajorMinor).$(Version.Revision)'
+
+- task: NuGetToolInstaller@0
+  displayName: 'Use NuGet 4.5'
+  inputs:
+    versionSpec: 4.5
+
+- task: NuGetCommand@2
+  displayName: 'NuGet restore'
+  inputs:
+    restoreSolution: '**/*.sln'
+
+- task: XamariniOS@2
+  displayName: 'Build Xamarin.iOS solution **/*.sln - No App Package'
+  inputs:
+    solutionFile: '**/*.sln'
+    configuration: 'Debug'
+    packageApp: false
+    buildForSimulator: true
+  condition: and(succeeded(), or(eq(variables['Build.Reason'], 'PullRequest'), eq('${{ parameters.configuration }}', 'Debug')))
+
+- task: XamariniOS@2
+  displayName: 'Build Xamarin.iOS solution **/*.sln'
+  inputs:
+    solutionFile: '**/*.sln'
+    configuration: '${{ parameters.configuration }}'
+    appPackage: true
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+  inputs:
+    SourceFolder: '$(system.defaultworkingdirectory)'
+    Contents: '**/*.ipa'
+    TargetFolder: '$(build.artifactstagingdirectory)/${{ parameters.dropLocation }}'
+    flattenFolders: true
+
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
+
+
+- task: AppCenterDistribute@0
+  displayName: 'Deploy **/*.ipa to Visual Studio App Center'
+  inputs:
+    serverEndpoint: AppCenter
+    appSlug: '${{ parameters.appCenterOrganization }}/${{ parameters.appCenterIOS }}'
+    appFile: '**/*.ipa'
+    symbolsIncludeParentDirectory: false
+    releaseNotesInput: '${{ parameters.releaseNotes }}'
+  condition: and(succeeded(), eq('${{ parameters.publishToAppCenter }}', 'True'))

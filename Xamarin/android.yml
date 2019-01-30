@@ -1,0 +1,77 @@
+parameters:
+  configuration: 'Debug'
+  androidManifestSource: ''
+  appcenterOrganization: ''
+  appcenterAndroid: ''
+  keyStoreSecureFile: ''
+  keyStoreAlias: ''
+  keyStorePassword: ''
+  keyPassword: ''
+  releaseNotes: ''
+  publishToAppCenter: true
+  dropLocation: 'drop'
+
+steps:
+- task: vs-publisher-473885.motz-mobile-buildtasks.android-manifest-version.android-manifest-version@1
+  displayName: 'Bump Android Versions in src/DnnSummit.Android/Properties/AndroidManifest.xml'
+  inputs:
+    sourcePath: ${{ parameters.androidManifestSource }}
+    versionName: '$(Version.majorMinor).$(Version.revision)'
+
+- task: NuGetToolInstaller@0
+  displayName: 'Use NuGet 4.4.1'
+  inputs:
+    versionSpec: 4.4.1
+
+- task: NuGetCommand@2
+  displayName: 'NuGet restore'
+  inputs:
+    restoreSolution: '**/*.sln'
+
+- task: XamarinAndroid@1
+  displayName: 'Build Xamarin.Android project **/*Droid*.csproj'
+  inputs:
+    projectFile: '**/*Droid*.csproj'
+    outputDirectory: '$(Build.BinariesDirectory)/${{ parameters.configuration }}'
+    configuration: '${{ parameters.configuration }}'
+
+- task: MSBuild@1
+  displayName: 'Build solution **/*test*.csproj'
+  inputs:
+    solution: '**/*test*.csproj'
+    configuration: '${{ parameters.configuration }}'
+    msbuildArguments: '/p:OutputPath="$(Build.BinariesDirectory)/${{ parameters.configuration }}/test-assembly"'
+  enabled: false
+
+- task: AndroidSigning@3
+  displayName: 'Signing and aligning APK file(s) $(Build.BinariesDirectory)/${{ parameters.configuration }}/*.apk'
+  inputs:
+    apkFiles: '$(Build.BinariesDirectory)/${{ parameters.configuration }}/*.apk'
+    apksignerKeystoreFile: '${{ parameters.keyStoreSecureFile }}'
+    apksignerKeystorePassword: '${{ parameters.keyStorePassword }}'
+    apksignerKeystoreAlias: ${{ parameters.keyStoreAlias }}
+    apksignerKeyPassword: '${{ parameters.keyPassword }}'
+    apksignerArguments: '-verbose'
+  condition: and(succeeded(), eq(variables['System.PullRequest.IsFork'], 'false'))
+
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
+  inputs:
+    SourceFolder: '$(Build.BinariesDirectory)/${{ parameters.configuration }}'
+    Contents: '**/*.apk'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/${{ parameters.dropLocation }}'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+
+- task: AppCenterDistribute@0
+  displayName: 'Deploy $(Build.BinariesDirectory)/${{ parameters.configuration }}/*.apk to Visual Studio App Center'
+  inputs:
+    serverEndpoint: AppCenter
+    appSlug: '${{ parameters.appcenterOrganization}}/${{ parameters.appcenterAndroid }}'
+    appFile: '$(Build.BinariesDirectory)/${{ parameters.configuration }}/*.apk'
+    symbolsIncludeParentDirectory: false
+    releaseNotesInput: '${{ parameters.releaseNotes }}'
+  condition: and(succeeded(), eq('${{ parameters.publishToAppCenter }}', 'True'))
