@@ -65,27 +65,29 @@ jobs:
       validateParam "infoPListSource" "${{ parameters.infoPListSource }}"
       validateParam "androidManifestSource" "${{ parameters.androidManifestSource }}"  
 
-      if ("$(Build.Reason)" -ne "PullRequest")
+      if ("$(Build.BuildReason)" -eq "PullRequest")
       {
-        validateParam "adhocKeyStoreSecureFile" "${{ parameters.adhocKeyStoreSecureFile }}"
-        validateParam "adhocKeyStoreAlias" "${{ parameters.adhocKeyStoreAlias }}"
-        validateParam "adhocKeyStorePassword" "${{ parameters.adhocKeyStorePassword }}"
-        validateParam "adhocKeyPassword" "${{ parameters.adhocKeyPassword }}"
-        validateParam "adhocAndroidReleaseNotes" "${{ parameters.adhocAndroidReleaseNotes }}"
-        validateParam "adhocSecureFileProvisioningProfile" "${{ parameters.adhocSecureFileProvisioningProfile }}"
-        validateParam "adhocSecureFileP12" "${{ parameters.adhocSecureFileP12 }}"
-        validateParam "adhocP12Password" "${{ parameters.adhocP12Password }}"
-        validateParam "adhocIOSReleaseNotes" "${{ parameters.adhocIOSReleaseNotes }}"
-        validateParam "releaseKeyStoreSecureFile" "${{ parameters.releaseKeyStoreSecureFile }}"
-        validateParam "releaseKeyStoreAlias" "${{ parameters.releaseKeyStoreAlias }}"
-        validateParam "releaseKeyStorePassword" "${{ parameters.releaseKeyStorePassword }}"
-        validateParam "releaseKeyPassword" "${{ parameters.releaseKeyPassword }}"
-        validateParam "releaseAndroidReleaseNotes" "${{ parameters.releaseAndroidReleaseNotes }}"
-        validateParam "releaseSecureFileProvisioningProfile" "${{ parameters.releaseSecureFileProvisioningProfile }}"
-        validateParam "releaseSecureFileP12" "${{ parameters.releaseSecureFileP12 }}"
-        validateParam "releaseP12Password" "${{ parameters.releaseP12Password }}"
-        validateParam "releaseIOSReleaseNotes" "${{ parameters.releaseIOSReleaseNotes }}"
+        exit 0
       }
+
+      validateParam "adhocKeyStoreSecureFile" "${{ parameters.adhocKeyStoreSecureFile }}"
+      validateParam "adhocKeyStoreAlias" "${{ parameters.adhocKeyStoreAlias }}"
+      validateParam "adhocKeyStorePassword" "${{ parameters.adhocKeyStorePassword }}"
+      validateParam "adhocKeyPassword" "${{ parameters.adhocKeyPassword }}"
+      validateParam "adhocAndroidReleaseNotes" "${{ parameters.adhocAndroidReleaseNotes }}"
+      validateParam "adhocSecureFileProvisioningProfile" "${{ parameters.adhocSecureFileProvisioningProfile }}"
+      validateParam "adhocSecureFileP12" "${{ parameters.adhocSecureFileP12 }}"
+      validateParam "adhocP12Password" "${{ parameters.adhocP12Password }}"
+      validateParam "adhocIOSReleaseNotes" "${{ parameters.adhocIOSReleaseNotes }}"
+      validateParam "releaseKeyStoreSecureFile" "${{ parameters.releaseKeyStoreSecureFile }}"
+      validateParam "releaseKeyStoreAlias" "${{ parameters.releaseKeyStoreAlias }}"
+      validateParam "releaseKeyStorePassword" "${{ parameters.releaseKeyStorePassword }}"
+      validateParam "releaseKeyPassword" "${{ parameters.releaseKeyPassword }}"
+      validateParam "releaseAndroidReleaseNotes" "${{ parameters.releaseAndroidReleaseNotes }}"
+      validateParam "releaseSecureFileProvisioningProfile" "${{ parameters.releaseSecureFileProvisioningProfile }}"
+      validateParam "releaseSecureFileP12" "${{ parameters.releaseSecureFileP12 }}"
+      validateParam "releaseP12Password" "${{ parameters.releaseP12Password }}"
+      validateParam "releaseIOSReleaseNotes" "${{ parameters.releaseIOSReleaseNotes }}"
     displayName: Validating Required Parameters
 
 - job: AdHociOSBuild
