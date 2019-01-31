@@ -65,7 +65,7 @@ jobs:
       validateParam "infoPListSource" "${{ parameters.infoPListSource }}"
       validateParam "androidManifestSource" "${{ parameters.androidManifestSource }}"  
 
-      if ("$(Build.BuildReason)" -eq "PullRequest")
+      if ("${env:BUILD_REASON}" -eq "PullRequest")
       {
         exit 0
       }
@@ -89,6 +89,8 @@ jobs:
       validateParam "releaseP12Password" "${{ parameters.releaseP12Password }}"
       validateParam "releaseIOSReleaseNotes" "${{ parameters.releaseIOSReleaseNotes }}"
     displayName: Validating Required Parameters
+    env:
+      BUILD_REASON: $(Build.BuildReason)
 
 - job: AdHociOSBuild
   dependsOn: VerifyParametersVariables
