@@ -64,12 +64,6 @@ jobs:
       }
       validateParam "infoPListSource" "${{ parameters.infoPListSource }}"
       validateParam "androidManifestSource" "${{ parameters.androidManifestSource }}"  
-
-      if ("${env:BUILD_REASON}" -eq "PullRequest")
-      {
-        exit 0
-      }
-
       validateParam "adhocKeyStoreSecureFile" "${{ parameters.adhocKeyStoreSecureFile }}"
       validateParam "adhocKeyStoreAlias" "${{ parameters.adhocKeyStoreAlias }}"
       validateParam "adhocKeyStorePassword" "${{ parameters.adhocKeyStorePassword }}"
@@ -89,8 +83,7 @@ jobs:
       validateParam "releaseP12Password" "${{ parameters.releaseP12Password }}"
       validateParam "releaseIOSReleaseNotes" "${{ parameters.releaseIOSReleaseNotes }}"
     displayName: Validating Required Parameters
-    env:
-      BUILD_REASON: $(Build.BuildReason)
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
 - job: AdHociOSBuild
   dependsOn: VerifyParametersVariables
