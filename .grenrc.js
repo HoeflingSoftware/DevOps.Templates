@@ -13,7 +13,7 @@ module.exports = {
     "groupBy": {
         "Xamarin Enhancements": ["Xamarin", "enhancement"],
         "GitHub Enhancements": ["GitHub", "enhancement"],
-        "Bugs Fixed:": ["bug"],
+        "Bug Fixes:": ["bug"],
         "Documentation Improvements:": ["documentation"],
         "Duplicate Issues:": ["duplicate"],
     },
