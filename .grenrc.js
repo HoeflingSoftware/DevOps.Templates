@@ -11,7 +11,8 @@ module.exports = {
         "good first issue"
     ],
     "groupBy": {
-        "Enhancements": ["enhancement"],
+        "Xamarin Enhancements": ["Xamarin", "enhancement"],
+        "GitHub Enhancements": ["GitHub", "enhancement"],
         "Bugs Fixed:": ["bug"],
         "Documentation Improvements:": ["documentation"],
         "Duplicate Issues:": ["duplicate"],
