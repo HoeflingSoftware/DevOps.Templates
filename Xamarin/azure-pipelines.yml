@@ -65,7 +65,7 @@ jobs:
       validateParam "infoPListSource" "${{ parameters.infoPListSource }}"
       validateParam "androidManifestSource" "${{ parameters.androidManifestSource }}"  
 
-      if ($(Build.Reason) -ne "PullRequest")
+      if ("$(Build.Reason)" -ne "PullRequest")
       {
         validateParam "adhocKeyStoreSecureFile" "${{ parameters.adhocKeyStoreSecureFile }}"
         validateParam "adhocKeyStoreAlias" "${{ parameters.adhocKeyStoreAlias }}"
