@@ -56,6 +56,12 @@ jobs:
     displayName: 'Create GitHub Release'
     workingDirectory: $(Build.SourcesDirectory)
 
+  - powershell: 'gren changelog --override --username=${{ parameters.githubOrganization }} --token=$env:TOKEN --repo=${{ parameters.githubRepo }}; exit $LASTEXITCODE'
+    env:
+      TOKEN: ${{ parameters.githubToken }}
+    displayName: 'Update GitHub Changelog.md'
+    workingDirectory: $(Build.SourcesDirectory)
+
   - task: hoefling-software.GitHubTasks.GitHubPublishReleaseArtifact.GitHubPublishReleaseArtifact@1
     displayName: Publish GitHub Release Artifact
     inputs:
