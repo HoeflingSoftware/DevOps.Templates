@@ -94,7 +94,7 @@ jobs:
     - Xamarin.iOS
 
   steps:
-  ${{ if and(ne('${{ parameters.appcenterIOSSecret }}', ''), ne('${{ parameters.appcenterAndroidSecret }}', '')) }}
+  ${{ if and(ne('${{ parameters.appcenterIOSSecret }}', ''), ne('${{ parameters.appcenterAndroidSecret }}', '')) }}:
   - template: secrets.yml
     parameters:
       appcenterAndroid: ${{ parameters.appcenterIOSSecret }}
