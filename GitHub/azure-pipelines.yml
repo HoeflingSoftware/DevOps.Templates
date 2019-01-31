@@ -49,7 +49,7 @@ jobs:
       verbose: false
       customCommand: 'install github-release-notes -g'
 
-  - powershell: 'gren release --override --username=${{ parameters.githubOrganization }} --token=$env:TOKEN --repo=${{ parameters.githubRepo }}; exit $LASTEXITCODE'
+  - powershell: 'gren release --username=${{ parameters.githubOrganization }} --token=$env:TOKEN --repo=${{ parameters.githubRepo }} --override; exit $LASTEXITCODE'
     env:
       TOKEN: ${{ parameters.githubToken }}
     displayName: 'Create GitHub Release'
