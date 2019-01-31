@@ -66,4 +66,4 @@ jobs:
       githubToken: ${{ parameters.githubToken }}
       artifact: '$(System.DefaultWorkingDirectory)/${{ parameters.artifactPath }}'
       artifactDisplayName: '${{ parameters.artifactDisplayName }}'
-    condition: and(succeeded(), eq('${{ parameters.publish }}', 'true') ne('${{ parameters.artifactStoreName }}', ''), ne('${{ parameters.artifactPath }}', ''), ne('${{ parameters.artifactDisplayName }}', ''))
+    condition: and(succeeded(), eq('${{ parameters.publish }}', 'true'), ne('${{ parameters.artifactStoreName }}', ''), ne('${{ parameters.artifactPath }}', ''), ne('${{ parameters.artifactDisplayName }}', ''))
