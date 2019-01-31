@@ -24,6 +24,7 @@ jobs:
       validateParam "githubOrganization" "${{ parameters.githubOrganization }}"
       validateParam "githubRepo" "${{ parameters.githubRepo }}"
       validateParam "githubToken" "${{ parameters.githubToken }}"
+    displayName: Validate Parameters
 
 - job: GitHubRelease
   dependsOn: VerifyInputs
