@@ -3,6 +3,8 @@ trigger:
     include: 
       - refs/tags/*
 
+pr: none
+
 variables:
   GitHub.Organization: 'HoeflingSoftware'
   GitHub.Repo: 'DevOps.Templates'
