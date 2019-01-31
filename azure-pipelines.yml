@@ -1,7 +1,6 @@
 trigger:
   branches:
     include: 
-      - master
       - refs/tags/*
 
 variables:
@@ -14,3 +13,4 @@ jobs:
     githubOrganization: '$(GitHub.Organization)'
     githubRepo: '$(GitHub.Repo)'
     githubToken: '$(GitHub.Token)'
+    publish: false
