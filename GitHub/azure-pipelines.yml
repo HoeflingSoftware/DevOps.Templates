@@ -6,70 +6,55 @@ parameters:
   publishedArtifactPath: ''
   publishedArtifactDisplayName: ''
 
-jobs:
-- job: VerifyInputs
-  displayName: Verify Build Inputs
-  pool:
-    name: "Hosted VS2017"
-  condition: and(succeeded(), startswith(variables['Build.SourceBranch'], 'refs/tags'))
+steps:
+- checkout: none
 
-  steps:
-  - checkout: none
-
-  - powershell: |
-      function validateParam($name, $value)
+- powershell: |
+    function validateParam($name, $value)
+    {
+      if ([string]::IsNullOrEmpty($value))
       {
-        if ([string]::IsNullOrEmpty($value))
-        {
-          Write-Error "Parameters $name is missing"
-          exit 1
-        }
+        Write-Error "Parameters $name is missing"
+        exit 1
       }
-      validateParam "githubOrganization" "${{ parameters.githubOrganization }}"
-      validateParam "githubRepo" "${{ parameters.githubRepo }}"
-      validateParam "githubToken" "${{ parameters.githubToken }}"
-    displayName: Validate Parameters
+    }
+    validateParam "githubOrganization" "${{ parameters.githubOrganization }}"
+    validateParam "githubRepo" "${{ parameters.githubRepo }}"
+    validateParam "githubToken" "${{ parameters.githubToken }}"
+  displayName: Validate Parameters
+  
+- task: DownloadBuildArtifacts@0
+  displayName: Download Build Artifacts
+  inputs:
+    artifactName: ${{ parameters.artifactStoreName }}
+    downloadPath: $(System.DefaultWorkingDirectory)
+  condition: and(succeeded(), eq('${{ parameters.publish }}', 'true'), ne('${{ parameters.artifactStoreName }}', ''))
 
-- job: GitHubRelease
-  dependsOn: VerifyInputs
-  displayName: GitHub Release
-  pool:
-    name: "Hosted VS2017"
-  condition: and(succeeded(), startswith(variables['Build.SourceBranch'], 'refs/tags'))
+- task: Npm@1
+  displayName: 'npm install github-release-notes'
+  inputs:
+    command: custom
+    verbose: false
+    customCommand: 'install github-release-notes -g'
 
-  steps:
-  - task: DownloadBuildArtifacts@0
-    displayName: Download Build Artifacts
-    inputs:
-      artifactName: ${{ parameters.artifactStoreName }}
-      downloadPath: $(System.DefaultWorkingDirectory)
-    condition: and(succeeded(), eq('${{ parameters.publish }}', 'true'), ne('${{ parameters.artifactStoreName }}', ''))
+- powershell: 'gren release --username=${{ parameters.githubOrganization }} --token=$env:TOKEN --repo=${{ parameters.githubRepo }} --override; exit $LASTEXITCODE'
+  env:
+    TOKEN: ${{ parameters.githubToken }}
+  displayName: 'Create GitHub Release'
+  workingDirectory: $(Build.SourcesDirectory)
 
-  - task: Npm@1
-    displayName: 'npm install github-release-notes'
-    inputs:
-      command: custom
-      verbose: false
-      customCommand: 'install github-release-notes -g'
+- powershell: 'gren changelog --override --username=${{ parameters.githubOrganization }} --token=$env:TOKEN --repo=${{ parameters.githubRepo }}; exit $LASTEXITCODE'
+  env:
+    TOKEN: ${{ parameters.githubToken }}
+  displayName: 'Update GitHub Changelog.md'
+  workingDirectory: $(Build.SourcesDirectory)
 
-  - powershell: 'gren release --username=${{ parameters.githubOrganization }} --token=$env:TOKEN --repo=${{ parameters.githubRepo }} --override; exit $LASTEXITCODE'
-    env:
-      TOKEN: ${{ parameters.githubToken }}
-    displayName: 'Create GitHub Release'
-    workingDirectory: $(Build.SourcesDirectory)
-
-  - powershell: 'gren changelog --override --username=${{ parameters.githubOrganization }} --token=$env:TOKEN --repo=${{ parameters.githubRepo }}; exit $LASTEXITCODE'
-    env:
-      TOKEN: ${{ parameters.githubToken }}
-    displayName: 'Update GitHub Changelog.md'
-    workingDirectory: $(Build.SourcesDirectory)
-
-  - task: hoefling-software.GitHubTasks.GitHubPublishReleaseArtifact.GitHubPublishReleaseArtifact@1
-    displayName: Publish GitHub Release Artifact
-    inputs:
-      githubRepo: ${{ parameters.githubRepo }}
-      githubOrganization: ${{ parameters.githubOrganization }}
-      githubToken: ${{ parameters.githubToken }}
-      artifact: '$(System.DefaultWorkingDirectory)/${{ parameters.artifactPath }}'
-      artifactDisplayName: '${{ parameters.artifactDisplayName }}'
-    condition: and(succeeded(), eq('${{ parameters.publish }}', 'true'), ne('${{ parameters.artifactStoreName }}', ''), ne('${{ parameters.artifactPath }}', ''), ne('${{ parameters.artifactDisplayName }}', ''))
+- task: hoefling-software.GitHubTasks.GitHubPublishReleaseArtifact.GitHubPublishReleaseArtifact@1
+  displayName: Publish GitHub Release Artifact
+  inputs:
+    githubRepo: ${{ parameters.githubRepo }}
+    githubOrganization: ${{ parameters.githubOrganization }}
+    githubToken: ${{ parameters.githubToken }}
+    artifact: '$(System.DefaultWorkingDirectory)/${{ parameters.artifactPath }}'
+    artifactDisplayName: '${{ parameters.artifactDisplayName }}'
+  condition: and(succeeded(), eq('${{ parameters.publish }}', 'true'), ne('${{ parameters.artifactStoreName }}', ''), ne('${{ parameters.artifactPath }}', ''), ne('${{ parameters.artifactDisplayName }}', ''))
