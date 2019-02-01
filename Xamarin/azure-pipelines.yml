@@ -83,6 +83,7 @@ jobs:
       validateParam "releaseP12Password" "${{ parameters.releaseP12Password }}"
       validateParam "releaseIOSReleaseNotes" "${{ parameters.releaseIOSReleaseNotes }}"
     displayName: Validating Required Parameters
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
 - job: AdHociOSBuild
   dependsOn: VerifyParametersVariables
@@ -94,12 +95,12 @@ jobs:
     - Xamarin.iOS
 
   steps:
+
   - template: secrets.yml
     parameters:
       appcenterAndroid: ${{ parameters.appcenterIOSSecret }}
       appcenterIOS: ${{ parameters.appcenterAndroidSecret }}
       secretsFilePath: ${{ parameters.secretsFilePath }}
-    condition: and(succeeded(), ne('${{ parameters.appcenterIOSSecret }}', ''), ne('${{ parameters.appcenterAndroidSecret }}', ''))
 
   - template: ios.yml
     parameters:
@@ -131,7 +132,6 @@ jobs:
       appcenterAndroid: ${{ parameters.appcenterIOSSecret }}
       appcenterIOS: ${{ parameters.appcenterAndroidSecret }}
       secretsFilePath: ${{ parameters.secretsFilePath }}
-    condition: and(succeeded(), ne('${{ parameters.appcenterIOSSecret }}', ''), ne('${{ parameters.appcenterAndroidSecret }}', ''))
 
   - template: android.yml
     parameters:
@@ -166,7 +166,6 @@ jobs:
       appcenterAndroid: ${{ parameters.appcenterIOSSecret }}
       appcenterIOS: ${{ parameters.appcenterAndroidSecret }}
       secretsFilePath: ${{ parameters.secretsFilePath }}
-    condition: and(succeeded(), ne('${{ parameters.appcenterIOSSecret }}', ''), ne('${{ parameters.appcenterAndroidSecret }}', ''))
 
   - template: ios.yml
     parameters:
@@ -202,7 +201,6 @@ jobs:
       appcenterAndroid: ${{ parameters.appcenterIOSSecret }}
       appcenterIOS: ${{ parameters.appcenterAndroidSecret }}
       secretsFilePath: ${{ parameters.secretsFilePath }}
-    condition: and(succeeded(), ne('${{ parameters.appcenterIOSSecret }}', ''), ne('${{ parameters.appcenterAndroidSecret }}', ''))
 
   - template: android.yml
     parameters:
