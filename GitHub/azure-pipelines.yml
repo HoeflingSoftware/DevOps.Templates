@@ -7,8 +7,6 @@ parameters:
   publishedArtifactDisplayName: ''
 
 steps:
-- checkout: none
-
 - powershell: |
     function validateParam($name, $value)
     {
