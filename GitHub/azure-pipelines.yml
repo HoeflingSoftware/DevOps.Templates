@@ -54,6 +54,6 @@ steps:
     githubRepo: ${{ parameters.githubRepo }}
     githubOrganization: ${{ parameters.githubOrganization }}
     githubToken: ${{ parameters.githubToken }}
-    artifact: '$(System.DefaultWorkingDirectory)/${{ parameters.artifactPath }}'
-    artifactDisplayName: '${{ parameters.artifactDisplayName }}'
+    artifact: '$(System.DefaultWorkingDirectory)/${{ parameters.publishedArtifactPath }}'
+    artifactDisplayName: '${{ parameters.publishedArtifactDisplayName }}'
   condition: and(succeeded(), eq('${{ parameters.publish }}', 'true'), ne('${{ parameters.artifactStoreName }}', ''), ne('${{ parameters.publishedArtifactPath }}', ''), ne('${{ parameters.publishedArtifactDisplayName }}', ''))
