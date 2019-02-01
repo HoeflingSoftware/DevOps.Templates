@@ -11,6 +11,7 @@ jobs:
   displayName: Verify Build Inputs
   pool:
     name: "Hosted VS2017"
+  condition: and(succeeded(), startswith(variables['Build.SourceBranch'], 'refs/tags'))
 
   steps:
   - checkout: none
@@ -34,6 +35,7 @@ jobs:
   displayName: GitHub Release
   pool:
     name: "Hosted VS2017"
+  condition: and(succeeded(), startswith(variables['Build.SourceBranch'], 'refs/tags'))
 
   steps:
   - task: DownloadBuildArtifacts@0
