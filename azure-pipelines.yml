@@ -10,9 +10,16 @@ variables:
   GitHub.Repo: 'DevOps.Templates'
 
 jobs:
-- template: GitHub/azure-pipelines.yml
-  parameters:
-    githubOrganization: '$(GitHub.Organization)'
-    githubRepo: '$(GitHub.Repo)'
-    githubToken: '$(GitHub.Token)'
-    publish: false
+- job: Release
+  dependsOn: Build
+  displayName: Release
+  pool:
+    name: "Hosted VS2017"
+
+  steps:
+  - template: GitHub/azure-pipelines.yml
+    parameters:
+      githubOrganization: '$(GitHub.Organization)'
+      githubRepo: '$(GitHub.Repo)'
+      githubToken: '$(GitHub.Token)'
+      publish: false
