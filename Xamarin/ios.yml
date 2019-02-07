@@ -78,4 +78,4 @@ steps:
     appFile: '**/*.ipa'
     symbolsIncludeParentDirectory: false
     releaseNotesInput: '${{ parameters.releaseNotes }}'
-  condition: and(succeeded(), eq('${{ parameters.publishToAppCenter }}', 'True'))
+  condition: and(succeeded(), eq('${{ parameters.publishToAppCenter }}', 'True'), ne(variables['Build.Reason'], 'PullRequest'))
