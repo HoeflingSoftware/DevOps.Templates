@@ -98,8 +98,8 @@ jobs:
 
   - template: secrets.yml
     parameters:
-      appcenterAndroid: ${{ parameters.appcenterIOSSecret }}
-      appcenterIOS: ${{ parameters.appcenterAndroidSecret }}
+      appcenterAndroid: ${{ parameters.appcenterAndroidSecret }}
+      appcenterIOS: ${{ parameters.appcenterIOSSecret }}
       secretsFilePath: ${{ parameters.secretsFilePath }}
 
   - template: ios.yml
@@ -129,8 +129,8 @@ jobs:
   steps:
   - template: secrets.yml
     parameters:
-      appcenterAndroid: ${{ parameters.appcenterIOSSecret }}
-      appcenterIOS: ${{ parameters.appcenterAndroidSecret }}
+      appcenterAndroid: ${{ parameters.appcenterAndroidSecret }}
+      appcenterIOS: ${{ parameters.appcenterIOSSecret }}
       secretsFilePath: ${{ parameters.secretsFilePath }}
 
   - template: android.yml
@@ -163,8 +163,8 @@ jobs:
   steps:
   - template: secrets.yml
     parameters:
-      appcenterAndroid: ${{ parameters.appcenterIOSSecret }}
-      appcenterIOS: ${{ parameters.appcenterAndroidSecret }}
+      appcenterAndroid: ${{ parameters.appcenterAndroidSecret }}
+      appcenterIOS: ${{ parameters.appcenterIOSSecret }}
       secretsFilePath: ${{ parameters.secretsFilePath }}
 
   - template: ios.yml
@@ -198,8 +198,8 @@ jobs:
   steps:
   - template: secrets.yml
     parameters:
-      appcenterAndroid: ${{ parameters.appcenterIOSSecret }}
-      appcenterIOS: ${{ parameters.appcenterAndroidSecret }}
+      appcenterAndroid: ${{ parameters.appcenterAndroidSecret }}
+      appcenterIOS: ${{ parameters.appcenterIOSSecret }}
       secretsFilePath: ${{ parameters.secretsFilePath }}
 
   - template: android.yml
