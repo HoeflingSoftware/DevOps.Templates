@@ -129,15 +129,15 @@ jobs:
   steps:
   - template: secrets.yml
     parameters:
-      appcenterAndroid: ${{ parameters.appcenterAndroidSecret }}
-      appcenterIOS: ${{ parameters.appcenterIOSSecret }}
-      secretsFilePath: ${{ parameters.secretsFilePathShared }}
+      appcenterAndroid: '${{ parameters.appcenterAndroidSecret }}'
+      appcenterIOS: '${{ parameters.appcenterIOSSecret }}'
+      secretsFilePath: '${{ parameters.secretsFilePathShared }}'
       
   - template: secrets.yml
     parameters:
-      appcenterAndroid: ${{ parameters.appcenterAndroidSecret }}
-      appcenterIOS: ${{ parameters.appcenterIOSSecret }}
-      secretsFilePath: ${{ parameters.secretsFilePathAndroid }}
+      appcenterAndroid: '${{ parameters.appcenterAndroidSecret }}'
+      appcenterIOS: '${{ parameters.appcenterIOSSecret }}'
+      secretsFilePath: '${{ parameters.secretsFilePathAndroid }}'
 
   - template: android.yml
     parameters:
