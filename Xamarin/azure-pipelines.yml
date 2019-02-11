@@ -3,8 +3,7 @@ parameters:
   releaseConfiguration: 'Release'
   infoPListSource: ''
   androidManifestSource: ''
-  secretsFilePathiOS: ''
-  secretsFilePathAndroid: ''
+  secretsFilePath: ''
   createStorePackageOnBranch: 'master'
   # App Center
   appcenterOrganization: ''
@@ -96,19 +95,12 @@ jobs:
     - Xamarin.iOS
 
   steps:
-
   - template: secrets.yml
     parameters:
       appcenterAndroid: ${{ parameters.appcenterAndroidSecret }}
       appcenterIOS: ${{ parameters.appcenterIOSSecret }}
-      secretsFilePath: ${{ parameters.secretsFilePathiOS }}
+      secretsFilePath: ${{ parameters.secretsFilePath }}
       
-  - template: secrets.yml
-    parameters:
-      appcenterAndroid: ${{ parameters.appcenterAndroidSecret }}
-      appcenterIOS: ${{ parameters.appcenterIOSSecret }}
-      secretsFilePath: ${{ parameters.secretsFilePathAndroid }}
-
   - template: ios.yml
     parameters:
       infoPListSource: ${{ parameters.infoPListSource }}
@@ -134,18 +126,11 @@ jobs:
     - AndroidSDK
 
   steps:
-  
   - template: secrets.yml
     parameters:
       appcenterAndroid: ${{ parameters.appcenterAndroidSecret }}
       appcenterIOS: ${{ parameters.appcenterIOSSecret }}
-      secretsFilePath: ${{ parameters.secretsFilePathiOS }}
-  
-  - template: secrets.yml
-    parameters:
-      appcenterAndroid: ${{ parameters.appcenterAndroidSecret }}
-      appcenterIOS: ${{ parameters.appcenterIOSSecret }}
-      secretsFilePath: ${{ parameters.secretsFilePathAndroid }}
+      secretsFilePath: ${{ parameters.secretsFilePath }}
 
   - template: android.yml
     parameters:
@@ -175,18 +160,11 @@ jobs:
     - Xamarin.iOS
 
   steps:
-  
   - template: secrets.yml
     parameters:
       appcenterAndroid: ${{ parameters.appcenterAndroidSecret }}
       appcenterIOS: ${{ parameters.appcenterIOSSecret }}
-      secretsFilePath: ${{ parameters.secretsFilePathiOS }}
-  
-  - template: secrets.yml
-    parameters:
-      appcenterAndroid: ${{ parameters.appcenterAndroidSecret }}
-      appcenterIOS: ${{ parameters.appcenterIOSSecret }}
-      secretsFilePath: ${{ parameters.secretsFilePathAndroid }}
+      secretsFilePath: ${{ parameters.secretsFilePath }}
 
   - template: ios.yml
     parameters:
@@ -217,18 +195,11 @@ jobs:
     - AndroidSDK
 
   steps:
-  
   - template: secrets.yml
     parameters:
       appcenterAndroid: ${{ parameters.appcenterAndroidSecret }}
       appcenterIOS: ${{ parameters.appcenterIOSSecret }}
-      secretsFilePath: ${{ parameters.secretsFilePathiOS }}
-  
-  - template: secrets.yml
-    parameters:
-      appcenterAndroid: ${{ parameters.appcenterAndroidSecret }}
-      appcenterIOS: ${{ parameters.appcenterIOSSecret }}
-      secretsFilePath: ${{ parameters.secretsFilePathAndroid }}
+      secretsFilePath: ${{ parameters.secretsFilePath }}
 
   - template: android.yml
     parameters:
