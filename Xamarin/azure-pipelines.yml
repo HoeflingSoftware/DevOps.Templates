@@ -102,12 +102,6 @@ jobs:
       appcenterAndroid: ${{ parameters.appcenterAndroidSecret }}
       appcenterIOS: ${{ parameters.appcenterIOSSecret }}
       secretsFilePath: ${{ parameters.secretsFilePathiOS }}
-  
-  - template: secrets.yml
-    parameters:
-      appcenterAndroid: ${{ parameters.appcenterAndroidSecret }}
-      appcenterIOS: ${{ parameters.appcenterIOSSecret }}
-      secretsFilePath: ${{ parameters.secretsFilePathAndroid }}
 
   - template: ios.yml
     parameters:
