@@ -3,7 +3,8 @@ parameters:
   releaseConfiguration: 'Release'
   infoPListSource: ''
   androidManifestSource: ''
-  secretsFilePath: ''
+  secretsFilePathShared: ''
+  secretsFilePathAndroid: ''
   createStorePackageOnBranch: 'master'
   # App Center
   appcenterOrganization: ''
@@ -99,7 +100,7 @@ jobs:
     parameters:
       appcenterAndroid: ${{ parameters.appcenterAndroidSecret }}
       appcenterIOS: ${{ parameters.appcenterIOSSecret }}
-      secretsFilePath: ${{ parameters.secretsFilePath }}
+      secretsFilePath: ${{ parameters.secretsFilePathShared }}
       
   - template: ios.yml
     parameters:
@@ -130,7 +131,13 @@ jobs:
     parameters:
       appcenterAndroid: ${{ parameters.appcenterAndroidSecret }}
       appcenterIOS: ${{ parameters.appcenterIOSSecret }}
-      secretsFilePath: ${{ parameters.secretsFilePath }}
+      secretsFilePath: ${{ parameters.secretsFilePathShared }}
+      
+  - template: secrets.yml
+    parameters:
+      appcenterAndroid: ${{ parameters.appcenterAndroidSecret }}
+      appcenterIOS: ${{ parameters.appcenterIOSSecret }}
+      secretsFilePath: ${{ parameters.secretsFilePathAndroid }}
 
   - template: android.yml
     parameters:
@@ -164,7 +171,7 @@ jobs:
     parameters:
       appcenterAndroid: ${{ parameters.appcenterAndroidSecret }}
       appcenterIOS: ${{ parameters.appcenterIOSSecret }}
-      secretsFilePath: ${{ parameters.secretsFilePath }}
+      secretsFilePath: ${{ parameters.secretsFilePathShared }}
 
   - template: ios.yml
     parameters:
@@ -199,7 +206,13 @@ jobs:
     parameters:
       appcenterAndroid: ${{ parameters.appcenterAndroidSecret }}
       appcenterIOS: ${{ parameters.appcenterIOSSecret }}
-      secretsFilePath: ${{ parameters.secretsFilePath }}
+      secretsFilePath: ${{ parameters.secretsFilePathShared }}
+      
+  - template: secrets.yml
+    parameters:
+      appcenterAndroid: ${{ parameters.appcenterAndroidSecret }}
+      appcenterIOS: ${{ parameters.appcenterIOSSecret }}
+      secretsFilePath: ${{ parameters.secretsFilePathAndroid }}
 
   - template: android.yml
     parameters:
