@@ -85,7 +85,7 @@ jobs:
       validateParam "releaseP12Password" "${{ parameters.releaseP12Password }}"
       validateParam "releaseIOSReleaseNotes" "${{ parameters.releaseIOSReleaseNotes }}"
       
-      if (useAppCenter -eq true)
+      if (${{ parameters.useAppCenter }} -eq true)
       {
         validateParam "appcenterIOSSecret" "${{ parameters.appcenterIOSSecret }}"
         validateParam "appcenterAndroidSecret" "${{ parameters.appcenterAndroidSecret }}"
