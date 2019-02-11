@@ -12,6 +12,7 @@ parameters:
   appcenterAndroid: ''
   appcenterIOSSecret: ''
   appcenterAndroidSecret: ''
+  useAppCenter: false
   # Ad-Hoc Android
   adhocKeyStoreSecureFile: ''
   adhocKeyStoreAlias: ''
@@ -83,6 +84,12 @@ jobs:
       validateParam "releaseSecureFileP12" "${{ parameters.releaseSecureFileP12 }}"
       validateParam "releaseP12Password" "${{ parameters.releaseP12Password }}"
       validateParam "releaseIOSReleaseNotes" "${{ parameters.releaseIOSReleaseNotes }}"
+      
+      if (useAppCenter -eq true)
+      {
+        validateParam "appcenterIOSSecret" "${{ parameters.appcenterIOSSecret }}"
+        validateParam "appcenterAndroidSecret" "${{ parameters.appcenterAndroidSecret }}"
+      }
     displayName: Validating Required Parameters
     condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
